@@ -25,6 +25,7 @@
         <spring-cloud-function.version>3.2.8</spring-cloud-function.version>
         <wrapper.version>1.0.10.RELEASE</wrapper.version>
         <aws-lambda-core.version>1.2.1</aws-lambda-core.version>
+        <aws-lambda-events.version>2.2.1</aws-lambda-events.version>
         <slf-event-core.version>0.0.1</slf-event-core.version>
         <start-class>com.slf.handlers.FunctionApplication</start-class>
     </properties>
@@ -60,6 +61,11 @@
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-asciidoctor</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-runtime-interface-client</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <!-- Provided Scope -->
         <dependency>
@@ -78,6 +84,23 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
