@@ -3,6 +3,8 @@ package com.slf.functions;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.stepfunctions.AWSStepFunctions;
 import com.amazonaws.services.stepfunctions.AWSStepFunctionsClientBuilder;
+import com.amazonaws.services.stepfunctions.model.DescribeExecutionRequest;
+import com.amazonaws.services.stepfunctions.model.DescribeExecutionResult;
 import com.amazonaws.services.stepfunctions.model.StartExecutionRequest;
 import com.amazonaws.services.stepfunctions.model.StartExecutionResult;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,14 @@ public class EventQueueFunction implements Function<SQSEvent, Void> {
         LOG.info("[INFO] " + System.getenv("STEP_FUNCTION_ARN"));
 
         StartExecutionResult result = stepFunctions.startExecution(stepFunctionRequest);
+        LOG.info("[INFO] " + result.toString());
+
+        DescribeExecutionRequest describeExecutionRequest = new DescribeExecutionRequest();
+        describeExecutionRequest.setExecutionArn(result.getExecutionArn());
+
+        DescribeExecutionResult describeExecutionResult = stepFunctions.describeExecution(describeExecutionRequest);
+        LOG.info("[INFO] " + describeExecutionResult.toString());
+        LOG.info("[INFO] " + describeExecutionResult.getStatus());
 
         return null;
     }

@@ -19,6 +19,10 @@ public class TemplateFunction implements Function<TemplateRequest, TemplateRespo
 
     @Override
     public TemplateResponse apply(TemplateRequest request) {
+        if (request.getData() == null) {
+            throw new RuntimeException("[ERROR] Invalid input");
+        }
+
         TemplateResponse response = new TemplateResponse();
         response.setResult(dummyService.get());
 
