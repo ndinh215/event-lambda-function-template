@@ -29,7 +29,8 @@ public class DbFunction implements Function<TemplateRequest, TemplateResponse> {
         String filter = "memberAddress = :mAddress AND memberName = :mName";
 
         int count = dbService.queryTable("us-west-2", "test-table", attValues, filter);
+        dbService.updateField("us-west-2", "test-table", "123", null, "test-updated");
 
-        return null;
+        return new TemplateResponse();
     }
 }

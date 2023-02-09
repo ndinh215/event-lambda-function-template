@@ -9,7 +9,6 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
-import software.amazon.awssdk.utils.AttributeMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +60,9 @@ public class DynamoDbServiceImpl implements DbService{
 
         Key key = Key.builder().partitionValue(keyValue).build();
         Member member = table.getItem(r->r.key(key));
-        member.setMemberName("Updated");
+        member.setMemberName(value);
+
+        table.updateItem(member);
 
         return true;
     }
