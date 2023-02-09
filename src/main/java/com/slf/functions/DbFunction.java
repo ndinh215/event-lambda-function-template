@@ -24,7 +24,7 @@ public class DbFunction implements Function<TemplateRequest, TemplateResponse> {
         DynamoDbServiceImpl dbService = new DynamoDbServiceImpl();
         HashMap<String, String> attValues = new HashMap<>();
         attValues.put(":mAddress", "HN");
-        attValues.put(":mName", "Test");
+        attValues.put(":mName", "Demo");
 
         String filter = "memberAddress = :mAddress AND memberName = :mName";
 
