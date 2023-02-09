@@ -3,10 +3,7 @@ package com.slf.services;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +11,7 @@ import java.util.Map;
 public class DynamoDbServiceImpl implements DbService{
 
     @Override
-    public int queryTable(String regionName, String tableName, Map<String, String> keyValues, Map<String, String> aliasList) {
+    public int queryTable(String regionName, String tableName, Map<String, String> keyValues, String filter) {
         ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
         Region region = Region.of(regionName);
         DynamoDbClient ddb = DynamoDbClient.builder()
@@ -24,32 +21,22 @@ public class DynamoDbServiceImpl implements DbService{
 
         HashMap<String, AttributeValue> attrValues = new HashMap<>();
         keyValues.forEach((fieldName, value) -> {
-            attrValues.put(":" + fieldName, AttributeValue.builder()
+            attrValues.put(fieldName, AttributeValue.builder()
                     .s(value)
                     .build());
         });
 
-        StringBuilder keyCondition = new StringBuilder();
-        for (String fieldName: aliasList.keySet()) {
-            if (!keyCondition.toString().equals("")) {
-                keyCondition.append(" and ");
-            }
-
-            keyCondition.append(aliasList.get(fieldName)).append("= :").append(fieldName);
-        }
-
-
-        QueryRequest queryReq = QueryRequest.builder()
+        ScanRequest queryReq = ScanRequest.builder()
                 .tableName(tableName)
                 .expressionAttributeValues(attrValues)
-                .keyConditionExpression(keyCondition.toString())
+                .filterExpression(filter)
                 .build();
 
         try {
-            QueryResponse response = ddb.query(queryReq);
+            ScanResponse response = ddb.scan(queryReq);
             return response.count();
-        } catch (DynamoDbException e) {
-            System.err.println(e.getMessage());
+        } catch (DynamoDbException ex) {
+            System.err.println(ex.getMessage());
         }
         return -1;
     }

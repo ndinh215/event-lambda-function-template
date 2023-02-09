@@ -22,13 +22,13 @@ public class DbFunction implements Function<TemplateRequest, TemplateResponse> {
     @Override
     public TemplateResponse apply(TemplateRequest request) {
         DynamoDbServiceImpl dbService = new DynamoDbServiceImpl();
-        HashMap<String, String> keyValues = new HashMap<>();
-        keyValues.put("mId", "123");
+        HashMap<String, String> attValues = new HashMap<>();
+        attValues.put(":mAddress", "HN");
+        attValues.put(":mName", "Test");
 
-        HashMap<String, String> aliasList = new HashMap<>();
-        aliasList.put("mId", "memberId");
+        String filter = "memberAddress = :mAddress AND memberName = :mName";
 
-        int count = dbService.queryTable("us-west-2", "test-table", keyValues, aliasList);
+        int count = dbService.queryTable("us-west-2", "test-table", attValues, filter);
 
         return null;
     }
