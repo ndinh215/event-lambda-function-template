@@ -3,6 +3,7 @@ package com.slf.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
@@ -17,6 +18,7 @@ public class Member {
     String memberName;
 
     @DynamoDbPartitionKey
+    @DynamoDbAttribute(value="memberId")
     public String getMemberId() {
         return memberId;
     }
