@@ -12,10 +12,9 @@ import java.util.logging.Logger;
 @Component
 public class TemplateFunction implements Function<TemplateRequest, TemplateResponse> {
 
+    private static final Logger LOG = Logger.getLogger(String.valueOf(TemplateFunction.class));
     @Autowired
     DummyRepository dummyService;
-
-    private static final Logger LOG = Logger.getLogger(String.valueOf(TemplateFunction.class));
 
     @Override
     public TemplateResponse apply(TemplateRequest request) {

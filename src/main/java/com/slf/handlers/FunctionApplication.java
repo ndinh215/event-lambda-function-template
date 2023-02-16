@@ -1,7 +1,6 @@
 package com.slf.handlers;
 
 import com.slf.functions.DbFunction;
-import com.slf.functions.TemplateFunction;
 import com.slf.models.TemplateRequest;
 import com.slf.models.TemplateResponse;
 import org.springframework.boot.SpringApplication;

@@ -14,23 +14,22 @@ import java.util.logging.Logger;
 @Component
 public class DbFunction implements Function<TemplateRequest, TemplateResponse> {
 
+    private static final Logger LOG = Logger.getLogger(String.valueOf(DbFunction.class));
     @Autowired
     DummyRepository dummyService;
-
-    private static final Logger LOG = Logger.getLogger(String.valueOf(DbFunction.class));
 
     @Override
     public TemplateResponse apply(TemplateRequest request) {
         DynamoDbServiceImpl dbService = new DynamoDbServiceImpl();
         HashMap<String, String> attValues = new HashMap<>();
-        attValues.put(":mAddress", "HN");
-        attValues.put(":mName", "Demo");
+        attValues.put(":mId", "2302150437069940471");
 
-        String filter = "memberAddress = :mAddress AND memberName = :mName";
+        String filter = "evt_id = :mId";
 
-        int count = dbService.queryTable("us-west-2", "test-table", attValues, filter);
-        dbService.updateField("us-west-2", "test-table", "123", null, "test-updated");
+        // int count = dbService.queryTable("ap-southeast-1", "evt_master", attValues, filter);
+        dbService.updateField("ap-southeast-1", "evt_master", "2302150437069940471", "2302150437067269990", null, "done");
 
+        // dbService.updateTableItem("ap-southeast-1", "al_test_sort", "table_id", "123", "status", "2");
         return new TemplateResponse();
     }
 }

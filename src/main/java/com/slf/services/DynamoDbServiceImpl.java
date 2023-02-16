@@ -13,14 +13,53 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DynamoDbServiceImpl implements DbService{
+public class DynamoDbServiceImpl implements DbService {
+
+    public static void updateTableItem(String regionName,
+                                       String tableName,
+                                       String key,
+                                       String keyVal,
+                                       String name,
+                                       String updateVal) {
+        Region region = Region.of(regionName);
+        DynamoDbClient ddb = DynamoDbClient.builder()
+                .region(region)
+                .build();
+
+        HashMap<String, AttributeValue> itemKey = new HashMap<>();
+        itemKey.put(key, AttributeValue.builder()
+                .s(keyVal)
+                .build());
+        itemKey.put("sort_id", AttributeValue.builder()
+                .s("1")
+                .build());
+
+        HashMap<String, AttributeValueUpdate> updatedValues = new HashMap<>();
+        updatedValues.put(name, AttributeValueUpdate.builder()
+                .value(AttributeValue.builder().s(updateVal).build())
+                .action(AttributeAction.PUT)
+                .build());
+
+        UpdateItemRequest request = UpdateItemRequest.builder()
+                .tableName(tableName)
+                .key(itemKey)
+                .attributeUpdates(updatedValues)
+                .build();
+
+        try {
+            ddb.updateItem(request);
+        } catch (ResourceNotFoundException e) {
+            System.err.println(e.getMessage());
+        } catch (DynamoDbException e) {
+            System.err.println(e.getMessage());
+        }
+        System.out.println("The Amazon DynamoDB table was updated!");
+    }
 
     @Override
     public int queryTable(String regionName, String tableName, Map<String, String> keyValues, String filter) {
-        ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
         Region region = Region.of(regionName);
         DynamoDbClient ddb = DynamoDbClient.builder()
-                .credentialsProvider(credentialsProvider)
                 .region(region)
                 .build();
 
@@ -43,11 +82,12 @@ public class DynamoDbServiceImpl implements DbService{
         } catch (DynamoDbException ex) {
             System.err.println(ex.getMessage());
         }
+
         return -1;
     }
 
     @Override
-    public boolean updateField(String regionName, String tableName, String keyValue, String fieldName, String value) {
+    public boolean updateField(String regionName, String tableName, String keyValue, String sortValue, String fieldName, String value) {
         ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
         Region region = Region.of(regionName);
         DynamoDbClient ddb = DynamoDbClient.builder()
@@ -58,11 +98,15 @@ public class DynamoDbServiceImpl implements DbService{
         DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.builder().dynamoDbClient(ddb).build();
         DynamoDbTable<Member> table = enhancedClient.table(tableName, TableSchema.fromBean(Member.class));
 
-        Key key = Key.builder().partitionValue(keyValue).build();
-        Member member = table.getItem(r->r.key(key));
-        member.setMemberName(value);
+        Key.Builder builder = Key.builder().partitionValue(keyValue);
+        if (sortValue != null) {
+            builder.sortValue(sortValue);
+        }
+        Key key = builder.build();
+        Member event = table.getItem(r -> r.key(key));
+        event.setStat(value);
 
-        table.updateItem(member);
+        table.updateItem(event);
 
         return true;
     }
