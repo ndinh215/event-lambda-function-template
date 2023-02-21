@@ -88,10 +88,8 @@ public class DynamoDbServiceImpl implements DbService {
 
     @Override
     public boolean updateField(String regionName, String tableName, String keyValue, String sortValue, String fieldName, String value) {
-        ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
         Region region = Region.of(regionName);
         DynamoDbClient ddb = DynamoDbClient.builder()
-                .credentialsProvider(credentialsProvider)
                 .region(region)
                 .build();
 
@@ -107,6 +105,21 @@ public class DynamoDbServiceImpl implements DbService {
         event.setStat(value);
 
         table.updateItem(event);
+
+        return true;
+    }
+
+    @Override
+    public boolean putItem(String regionName, String tableName, Member member) {
+        Region region = Region.of(regionName);
+        DynamoDbClient ddb = DynamoDbClient.builder()
+                .region(region)
+                .build();
+
+        DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.builder().dynamoDbClient(ddb).build();
+        DynamoDbTable<Member> table = enhancedClient.table(tableName, TableSchema.fromBean(Member.class));
+
+        table.putItem(member);
 
         return true;
     }
