@@ -1,7 +1,6 @@
 package com.slf.services;
 
 import com.slf.models.Member;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -9,8 +8,11 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.paginators.ScanIterable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DynamoDbServiceImpl implements DbService {
@@ -76,9 +78,18 @@ public class DynamoDbServiceImpl implements DbService {
                 .filterExpression(filter)
                 .build();
 
+        List<Map<String, AttributeValue>> items = new ArrayList<>();
         try {
-            ScanResponse response = ddb.scan(queryReq);
-            return response.count();
+            ScanIterable response = ddb.scanPaginator(queryReq);
+            for (ScanResponse page : response) {
+                items.addAll(page.items());
+
+                if (items.size() >= 200) {
+                    break;
+                }
+            }
+
+            return items.size();
         } catch (DynamoDbException ex) {
             System.err.println(ex.getMessage());
         }
