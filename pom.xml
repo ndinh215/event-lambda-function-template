@@ -27,7 +27,7 @@
         <aws-lambda-core.version>1.2.1</aws-lambda-core.version>
         <aws-lambda-events.version>2.2.1</aws-lambda-events.version>
         <slf-event-core.version>0.0.1</slf-event-core.version>
-        <start-class>com.slf.handlers.FunctionApplication</start-class>
+        <start-class>com.slf.FunctionApplication</start-class>
     </properties>
 
     <dependencyManagement>

@@ -1,7 +1,7 @@
 package com.slf.functions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.slf.handlers.FunctionApplication;
+import com.slf.FunctionApplication;
 import com.slf.models.TemplateRequest;
 import org.junit.Before;
 import org.junit.Test;

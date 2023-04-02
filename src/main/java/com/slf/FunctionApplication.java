@@ -1,6 +1,6 @@
-package com.slf.handlers;
+package com.slf;
 
-import com.slf.functions.DbFunction;
+import com.slf.functions.TemplateFunction;
 import com.slf.models.TemplateRequest;
 import com.slf.models.TemplateResponse;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +18,6 @@ public class FunctionApplication {
 
     @Bean
     public Function<TemplateRequest, TemplateResponse> handle() {
-        return new DbFunction();
+        return new TemplateFunction();
     }
 }
